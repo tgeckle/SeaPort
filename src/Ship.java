@@ -93,6 +93,31 @@ public class Ship extends Thing {
       return st;
    } // end method toFileString
    
+//   public int compareTo(Thing other) {
+//       return super.compareTo(other);
+//   } // Not sure if necessary.... 
+   
+   public int compareTo(Ship other) {
+       switch (Thing.sortCriterion) {
+           case WEIGHT : {
+               return (int)(weight - other.weight);
+               
+           }
+           case LENGTH : {
+               return (int)(length - other.length);
+           }
+           case WIDTH : {
+               return (int)(width - other.width);
+           }
+           case DRAFT : {
+               return (int)(draft - other.draft);
+           }
+           default : {
+               return super.compareTo(other);
+           }
+       }
+   }
+   
    /*
    Ship toString method
    */

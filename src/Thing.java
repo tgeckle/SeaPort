@@ -13,12 +13,13 @@ import java.util.Scanner;
  * fields which are required for all child classes.
  */
 class Thing implements Comparable <Thing> {
-   static java.util.Random rn = new java.util.Random ();
-   static ArrayList <String> skillNames = null; // to read file only once
-   
-   String name = null;
-   int index = 0;
-   int parent = 0; // ID number of the parent Thing
+    static java.util.Random rn = new java.util.Random();
+    static ArrayList<String> skillNames = null; // to read file only once
+    public static SortBy sortCriterion = SortBy.NAME; // default sort criterion
+
+    String name = null;
+    int index = 0;
+    int parent = 0; // ID number of the parent Thing
    
    /*
    empty no-parameter constructor
@@ -44,6 +45,11 @@ class Thing implements Comparable <Thing> {
            parent = input.nextInt();
        }
    } // end Thing Scanner constructor
+   
+   
+    public static void changeSort(SortBy criterion) {
+        sortCriterion = criterion;
+    }
    
    /*
    Method for reading file of skill names for use when generating random
@@ -90,8 +96,25 @@ class Thing implements Comparable <Thing> {
    /*
    compareTo() method for implementing Comparable interface
    */
-   public int compareTo (Thing m) {
-      return index - m.index;
+   @Override
+   public int compareTo (Thing other) {
+       switch (sortCriterion) {
+           case NAME : {
+               return name.compareTo(other.getName());
+           }
+           case PARENT_ID : {
+               return parent - other.getParent();
+           }
+           case INDEX : {
+               return index - other.getIndex();
+           }
+           case TYPE : {
+               return this.getClass().getName().compareTo(other.getClass().getName());
+           }
+           default : {
+               return 0;
+           }
+       }
    } // end method compareTo > Comparable
    
    /*
@@ -104,6 +127,7 @@ class Thing implements Comparable <Thing> {
    /*
    Thing toString
    */
+   @Override
    public String toString() {
        return name + " " + index;
    }
