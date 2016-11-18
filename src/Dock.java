@@ -19,10 +19,6 @@ public class Dock extends Thing {
    public Dock(Scanner input) {
        super(input);
    } // end Scanner constructor
-   
-   public Dock(String name, int parent) {
-       super(name, parent);
-   }
 
    /*
    Constructor for use with CreateSeaPortDataFile
