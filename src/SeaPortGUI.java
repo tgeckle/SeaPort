@@ -82,6 +82,9 @@ public class SeaPortGUI extends JFrame {
                 theWorld = new World();
                 chooser.setDialogTitle("Choose Input File");
                 chooser.setFileFilter(filter);
+                
+                Stack<String> portNames = new Stack<>();
+                portNames.add("SELECT PORT...");
 
                 int returnVal = chooser.showOpenDialog(frame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -91,8 +94,9 @@ public class SeaPortGUI extends JFrame {
                         theWorld.readFile(input);
                         
                         for (SeaPort port : theWorld.ports) {
-                            portSelect.addItem(port.getName());
+                            portNames.add(port.getName());
                         }
+                        portSelect.setModel(new DefaultComboBoxModel(portNames));
                         
                         portSelect.setEnabled(true);
                         typeSelect.setEnabled(true);
@@ -196,6 +200,118 @@ public class SeaPortGUI extends JFrame {
                 outputTextArea.setText(result);
             }
         });
+        
+        sortButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String sortResult = "";
+                ArrayList<? extends Thing> sortList = new ArrayList<>();
+                ArrayList<Thing> thingList = new ArrayList<>();
+                ArrayList<Ship> shipList = new ArrayList<>();
+                ArrayList<Person> personList = new ArrayList<>();
+                
+                // Changes sorting criterion based on selection from JComboBox
+                switch (sortBySelect.getSelectedItem().toString()) { 
+                    case "SORT BY..." : {
+                        JOptionPane.showMessageDialog(null, "Please select "
+                                + "sorting option.", "Selection Not Made",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                    case "Name" : {
+                        Thing.sortCriterion = SortBy.NAME;
+                        break;
+                    }
+                    case "Index" : {
+                        Thing.sortCriterion = SortBy.INDEX;
+                        break;
+                    }
+                    case "Skill" : {
+                        Thing.sortCriterion = SortBy.SKILL;
+                        break;
+                    }
+                    case "Weight" : {
+                        Thing.sortCriterion = SortBy.WEIGHT;
+                        break;
+                    }
+                    case "Length" : {
+                        Thing.sortCriterion = SortBy.LENGTH;
+                        break;
+                    }
+                    case "Width" : {
+                        Thing.sortCriterion = SortBy.WIDTH;
+                        break;
+                    }
+                    case "Draft" : {
+                        Thing.sortCriterion = SortBy.DRAFT;
+                        break;
+                    }
+                    
+                }
+                
+                
+                if (portSelect.getSelectedIndex() > 0) {
+                    SeaPort curPort = theWorld.ports.get(portSelect.getSelectedIndex() - 1);
+                    
+                    switch (typeSelect.getSelectedIndex()) {
+                        case 0 : {
+                            JOptionPane.showMessageDialog(null, "Please select "
+                                    + "type of Thing to be sorted.",
+                                    "Selection Not Made",
+                                    JOptionPane.ERROR_MESSAGE);
+                            break;
+                        }
+                        case 1 : { //Things
+                            thingList.addAll(curPort.docks);
+                            thingList.addAll(curPort.ships);
+                            thingList.addAll(curPort.persons);
+                            Collections.sort(thingList);
+                            sortList = thingList;
+                            break;
+                        }
+                        case 2 : { //People
+                            personList.addAll(curPort.persons);
+                            Collections.sort(personList);
+                            sortList = personList;
+                            break;
+                        }
+                        case 3 : { //Ships
+                            shipList.addAll(curPort.ships);
+                            Collections.sort(shipList);
+                            sortList = shipList;
+                            break;
+                        }
+                        case 4 : { //Ships in Queue
+                            shipList.addAll(curPort.queue);
+                            Collections.sort(shipList);
+                            sortList = shipList;
+                            break;
+                        }
+                        case 5 : { //Docks
+                            thingList.addAll(curPort.docks);
+                            Collections.sort(thingList);
+                            sortList = thingList;
+                            break;
+                        }
+                    } // end switch
+                    
+                    for (Thing item : sortList) {
+                        sortResult += item.toString() + 
+                                System.getProperty("line.separator");
+                    } // end for
+                    
+                    outputTextArea.setText(sortResult);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "<html><body><p style="
+                            + "'width: 200px;'> No port selected. "
+                            + "Please select a port from the drop-down and try "
+                            + "again. If there are no ports to select it is "
+                            + "because no input file has been selected."
+                            + "</p></body></html>", 
+                            "Selection Not Made", 
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         //Add components to panels, panels to frame
         filePane.add(fileField, BorderLayout.CENTER);
@@ -229,6 +345,7 @@ public class SeaPortGUI extends JFrame {
 
     public static void main(String[] args) {
         SeaPortGUI gui = new SeaPortGUI();
+        
     }
 
 }

@@ -54,6 +54,20 @@ public class Person extends Thing {
       catch (java.io.FileNotFoundException e) {System.out.println ("bad file");}
    } // end readWordsFile
    
+   public int compareTo (Thing other) {
+       Person o;
+       switch (Thing.sortCriterion) {
+           case SKILL : {
+               o = (Person) other;
+               return compareTo(o);
+           }
+           default : {
+               return super.compareTo(other);
+           }
+       }
+       
+   }
+   
    public int compareTo(Person other) {
        switch (Thing.sortCriterion) {
            case SKILL : {

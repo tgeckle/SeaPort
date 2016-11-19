@@ -55,6 +55,27 @@ public class PassengerShip extends Ship {
              numberOfPassengers, numberOfRooms, numberOfOccupiedRooms);
    } // end method toFileString
    
+   public int compareTo(Ship other) {
+       switch (Thing.sortCriterion) {
+           case WEIGHT : {
+               return (int)(weight - other.weight);
+               
+           }
+           case LENGTH : {
+               return (int)(length - other.length);
+           }
+           case WIDTH : {
+               return (int)(width - other.width);
+           }
+           case DRAFT : {
+               return (int)(draft - other.draft);
+           }
+           default : {
+               return super.compareTo(other);
+           }
+       }
+   }
+   
    /*
    PassengerShip toString
    */

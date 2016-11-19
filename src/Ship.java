@@ -97,11 +97,36 @@ public class Ship extends Thing {
 //       return super.compareTo(other);
 //   } // Not sure if necessary.... 
    
+   public int compareTo(Thing other) {
+       Ship o;
+       switch (Thing.sortCriterion) {
+           case WEIGHT : {
+               o = (Ship) other;
+               return compareTo(o);
+           }
+           case LENGTH : {
+               o = (Ship) other;
+               return compareTo(o);
+           }
+           case WIDTH : {
+               o = (Ship) other;
+               return compareTo(o);
+           }
+           case DRAFT : {
+               o = (Ship) other;
+               return compareTo(o);
+           }
+           default : {
+               return super.compareTo(other);
+           }
+       }
+       
+   }
+   
    public int compareTo(Ship other) {
        switch (Thing.sortCriterion) {
            case WEIGHT : {
                return (int)(weight - other.weight);
-               
            }
            case LENGTH : {
                return (int)(length - other.length);
@@ -122,7 +147,8 @@ public class Ship extends Thing {
    Ship toString method
    */
    public String toString() {
-       return super.toString();
+       return super.toString() + "; Weight: " + weight + " Length: " + length +
+               " Width: " + width + " Draft: " + draft;
    } // end Ship toString
 
 } // end class Ship
