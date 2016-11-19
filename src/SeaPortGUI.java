@@ -1,8 +1,8 @@
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -21,6 +21,10 @@ public class SeaPortGUI extends JFrame {
 
     private final String[] SEARCH_OPTIONS = {"Name", "Index", "Type", "Skill",
         "Parent ID"}; // list of options for search criteria
+    private final String[] TYPES = {"LIST ALL...", "Things", "People", "Ships", 
+        "Ships in Queue", "Docks"}; // list of types to sort
+    private String[] portCombo = {"SELECT PORT..."};
+    private String[] sortOptions = {"SORT BY...", "Name", "Index"};
     FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
     World theWorld; // All ports etc. are held within the World
 
@@ -37,9 +41,12 @@ public class SeaPortGUI extends JFrame {
         filePane.setBorder(new EmptyBorder(0, 40, 10, 60));
         JPanel searchPane = new JPanel(new BorderLayout(20, 0));
         searchPane.setBorder(new EmptyBorder(0, 20, 10, 20));
+        JPanel sortPane = new JPanel(new BorderLayout(20, 0));
+        sortPane.setBorder(new EmptyBorder(0, 20, 10, 20));
         
-        JPanel topPane = new JPanel(new BorderLayout());
+        JPanel topPane = new JPanel(new GridLayout(3,1,0,0));
         JPanel searchOptionsPane = new JPanel(new BorderLayout(10, 0));
+        JPanel sortByPane = new JPanel(new BorderLayout(10, 0));
 
         // Initialize Components
         JFileChooser chooser = new JFileChooser();
@@ -47,9 +54,17 @@ public class SeaPortGUI extends JFrame {
         fileField.setEditable(false);
         JTextField searchField = new JTextField(22);
         JComboBox options = new JComboBox(SEARCH_OPTIONS);
+        
+        JComboBox<String> portSelect = new JComboBox<String>(portCombo);
+        JComboBox<String> typeSelect = new JComboBox<String>(TYPES);
+        JComboBox<String> sortBySelect = new JComboBox<String>(sortOptions);
+        portSelect.setEnabled(false);
+        typeSelect.setEnabled(false);
+        sortBySelect.setEnabled(false);
 
         JButton fileButton = new JButton("Open File");
         JButton searchButton = new JButton("Search");
+        JButton sortButton = new JButton("Sort");
 
         JTextArea outputTextArea = new JTextArea(25,60);
         JScrollPane scrollPane = new JScrollPane(outputTextArea);
@@ -142,12 +157,20 @@ public class SeaPortGUI extends JFrame {
         
         searchOptionsPane.add(options, BorderLayout.WEST);
         searchOptionsPane.add(searchButton, BorderLayout.EAST);
+                
+        sortByPane.add(sortBySelect, BorderLayout.WEST);
+        sortByPane.add(sortButton, BorderLayout.EAST);
+        
+        sortPane.add(portSelect, BorderLayout.WEST);
+        sortPane.add(typeSelect, BorderLayout.CENTER);
+        sortPane.add(sortByPane, BorderLayout.EAST);
 
         searchPane.add(searchField, BorderLayout.CENTER);
         searchPane.add(searchOptionsPane, BorderLayout.EAST);
         
-        topPane.add(filePane, BorderLayout.NORTH);
-        topPane.add(searchPane, BorderLayout.SOUTH);
+        topPane.add(filePane);
+        topPane.add(searchPane);
+        topPane.add(sortPane);
 
         frame.add(topPane, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
