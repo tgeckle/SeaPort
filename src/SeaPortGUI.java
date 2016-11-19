@@ -1,6 +1,5 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 import javax.swing.*;
@@ -25,6 +24,12 @@ public class SeaPortGUI extends JFrame {
         "Ships in Queue", "Docks"}; // list of types to sort
     private String[] portCombo = {"SELECT PORT..."};
     private String[] sortOptions = {"SORT BY...", "Name", "Index"};
+    DefaultComboBoxModel defaultModel = new DefaultComboBoxModel(sortOptions);
+    private String[] sortOptionsPerson = {"SORT BY...", "Name", "Index", "Skill"};
+    DefaultComboBoxModel personModel = new DefaultComboBoxModel(sortOptionsPerson);
+    private String[] sortOptionsShip = {"SORT BY...", "Name", "Index", "Weight",
+        "Length", "Width", "Draft"};
+    DefaultComboBoxModel shipModel = new DefaultComboBoxModel(sortOptionsShip);
     FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
     World theWorld; // All ports etc. are held within the World
 
@@ -55,9 +60,9 @@ public class SeaPortGUI extends JFrame {
         JTextField searchField = new JTextField(22);
         JComboBox options = new JComboBox(SEARCH_OPTIONS);
         
-        JComboBox<String> portSelect = new JComboBox<String>(portCombo);
-        JComboBox<String> typeSelect = new JComboBox<String>(TYPES);
-        JComboBox<String> sortBySelect = new JComboBox<String>(sortOptions);
+        JComboBox<String> portSelect = new JComboBox<>(portCombo);
+        JComboBox<String> typeSelect = new JComboBox<>(TYPES);
+        JComboBox<String> sortBySelect = new JComboBox<>(sortOptions);
         portSelect.setEnabled(false);
         typeSelect.setEnabled(false);
         sortBySelect.setEnabled(false);
@@ -84,6 +89,13 @@ public class SeaPortGUI extends JFrame {
                         fileField.setText(chooser.getSelectedFile().getAbsolutePath());
                         Scanner input = new Scanner(chooser.getSelectedFile());
                         theWorld.readFile(input);
+                        
+                        for (SeaPort port : theWorld.ports) {
+                            portSelect.addItem(port.getName());
+                        }
+                        
+                        portSelect.setEnabled(true);
+                        typeSelect.setEnabled(true);
 
                         outputTextArea.setText(theWorld.toString());
                     } catch (FileNotFoundException exc) {
@@ -95,6 +107,40 @@ public class SeaPortGUI extends JFrame {
                 }
 
             }
+        });
+        
+        typeSelect.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                sortBySelect.setModel(defaultModel); //Resets sortBy combo box
+                switch (typeSelect.getSelectedIndex()) {
+                    case 0: {
+                        sortBySelect.setEnabled(false);
+                        break;
+                    }
+                    case 2: {
+                        sortBySelect.setModel(personModel);
+                        sortBySelect.setEnabled(true);
+                        break;
+                    }
+                    case 3: {
+                        sortBySelect.setModel(shipModel);
+                        sortBySelect.setEnabled(true);
+                        break;
+                    }
+                    case 4: {
+                        sortBySelect.setModel(shipModel);
+                        sortBySelect.setEnabled(true);
+                        break;
+                    }
+                    default: {
+                        sortBySelect.setEnabled(true);
+                        break;
+                    }
+                }
+
+            }
+            
+            
         });
         
         // Listener for the search button
