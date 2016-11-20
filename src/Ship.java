@@ -126,16 +126,48 @@ public class Ship extends Thing {
    public int compareTo(Ship other) {
        switch (Thing.sortCriterion) {
            case WEIGHT : {
-               return (int)(weight - other.weight);
+               if (weight < other.weight) {
+                   return -1;
+               }
+               else if (weight > other.weight) {
+                   return 1;
+               }
+               else {
+                   return 0;
+               }
            }
            case LENGTH : {
-               return (int)(length - other.length);
+               if (length < other.length) {
+                   return -1;
+               }
+               else if (length > other.length) {
+                   return 1;
+               }
+               else {
+                   return 0;
+               }
            }
            case WIDTH : {
-               return (int)(width - other.width);
+               if (width < other.width) {
+                   return -1;
+               }
+               else if (width > other.width) {
+                   return 1;
+               }
+               else {
+                   return 0;
+               }
            }
            case DRAFT : {
-               return (int)(draft - other.draft);
+               if (draft < other.draft) {
+                   return -1;
+               }
+               else if (draft > other.draft) {
+                   return 1;
+               }
+               else {
+                   return 0;
+               }
            }
            default : {
                return super.compareTo(other);
