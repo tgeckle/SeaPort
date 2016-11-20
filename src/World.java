@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.List;
 
@@ -38,37 +39,38 @@ class World extends Thing {
    
     // Reads a file to create a World of SeaPorts, Ships, Persons, etc.
     public void readFile(Scanner input) {
+        HashMap<Integer, Thing> map = new HashMap<>();
         while (input.hasNextLine()) {
-            processInput(new Scanner(input.nextLine()));
+            processInput(new Scanner(input.nextLine()), map);
         } // end while
     } // end readFile()
 
     // Processes a single line of Scanner input, ignoring blank & comment lines 
-    public void processInput(Scanner input) {
+    public void processInput(Scanner input, HashMap<Integer, Thing> map) {
         if (!input.hasNext()) {
             return;
         }
         switch (input.next()) {
             case "port":
-                addPort(input);
+                addPort(input, map);
                 break;
             case "dock":
-                addDock(input);
+                addDock(input, map);
                 break;
             case "ship":
-                addShip(input);
+                addShip(input, map);
                 break;
             case "cship":
-                addCargoShip(input);
+                addCargoShip(input, map);
                 break;
             case "pship":
-                addPassengerShip(input);
+                addPassengerShip(input, map);
                 break;
             case "person":
-                addPerson(input);
+                addPerson(input, map);
                 break;
             case "job":
-                addJob(input);
+                addJob(input, map);
                 break;
         } // end switch statement
     } // end processInput()
@@ -76,105 +78,78 @@ class World extends Thing {
     /*
     Adds a Port to the World
     */
-    public void addPort(Scanner input) {
+    public void addPort(Scanner input, HashMap<Integer, Thing> map) {
         SeaPort newPort = new SeaPort(input);
+        map.put(newPort.getIndex(), newPort);
         ports.add(newPort);
     } // end addPort
     
     /*
     Adds a Dock to a particular Port in the World
     */
-    public void addDock(Scanner input) {
+    public void addDock(Scanner input, HashMap<Integer, Thing> map) {
         Dock newDock = new Dock(input);
-        getPortByIndex(newDock.getParent()).addDock(newDock);
+        map.put(newDock.getIndex(), newDock);
+        ((SeaPort) map.get(newDock.getParent())).addDock(newDock);
     } // end addDock
     
     /*
     Adds a Ship to a particular Port and [Dock] in the World
     */
-    public void addShip(Scanner input) {
+    public void addShip(Scanner input, HashMap<Integer, Thing> map) {
         Ship newShip = new Ship(input);
-        if (getDockByIndex(newShip.getParent()) instanceof SeaPort) {
-            getPortByIndex(newShip.getParent()).addShip(newShip);
-        } else {
-            getPortByIndex((getDockByIndex(newShip.getParent()).getParent()))
-                    .addShip(newShip);
+        map.put(newShip.getIndex(), newShip);
+        if (map.get(newShip.getParent()) instanceof SeaPort) {
+            ((SeaPort) map.get(newShip.getParent())).addShip(newShip);
+        } 
+        else {
+            ((Dock) map.get(newShip.getParent())).addShip(newShip);
         }
     } // end addShip
     
     /*
     Adds a Cargo Ship to a particular Port and [Dock] in the World
     */
-    public void addCargoShip(Scanner input) {
+    public void addCargoShip(Scanner input, HashMap<Integer, Thing> map) {
         Ship newShip = new CargoShip(input);
-        if (getDockByIndex(newShip.getParent()) instanceof SeaPort) {
-            getPortByIndex(newShip.getParent()).addShip(newShip);
-        } else {
-            getPortByIndex((getDockByIndex(newShip.getParent()).getParent()))
-                    .addShip(newShip);
+        map.put(newShip.getIndex(), newShip);
+        if (map.get(newShip.getParent()) instanceof SeaPort) {
+            ((SeaPort) map.get(newShip.getParent())).addShip(newShip);
+        } 
+        else {
+            ((Dock) map.get(newShip.getParent())).addShip(newShip);
         }
     } // end addCargoShip
     
     /*
     Adds a Passenger Ship to a particular Port and [Dock] in the World
     */
-    public void addPassengerShip(Scanner input) {
+    public void addPassengerShip(Scanner input, HashMap<Integer, Thing> map) {
         Ship newShip = new PassengerShip(input);
-        if (getDockByIndex(newShip.getParent()) instanceof SeaPort) {
-            getPortByIndex(newShip.getParent()).addShip(newShip);
-        } else {
-            getPortByIndex((getDockByIndex(newShip.getParent()).getParent()))
-                    .addShip(newShip);
+        map.put(newShip.getIndex(), newShip);
+        if (map.get(newShip.getParent()) instanceof SeaPort) {
+            ((SeaPort) map.get(newShip.getParent())).addShip(newShip);
+        } 
+        else {
+            ((Dock) map.get(newShip.getParent())).addShip(newShip);
         }
     } // end addPassengerShip
     
     /*
     Adds a Person Ship to a particular Port in the World
     */
-    public void addPerson(Scanner input) {
+    public void addPerson(Scanner input, HashMap<Integer, Thing> map) {
         Person dude = new Person(input);
-        getPortByIndex(dude.getParent()).addPerson(dude);
+        map.put(dude.getIndex(), dude);
+        ((SeaPort) map.get(dude.getParent())).addPerson(dude);
     } // end addPerson
     
     /*
     Adds a Job to the World (unimplemented)
     */
-    public void addJob(Scanner input) {
+    public void addJob(Scanner input, HashMap<Integer, Thing> map) {
 
     } // end addJob
-    
-    /*
-    Method that returns the Port object associated with a given index
-    @param index the index to be searched for
-    */
-    public SeaPort getPortByIndex(int index) {
-        for (SeaPort port : ports) {
-            if (port.getIndex() == index) {
-                return port;
-            }
-        }
-        return null;
-    } // end getPortByIndex method
-    
-    /*
-    Method that returns the Dock OR Port object associated with a given index.
-    Structured this way because the parent of a Ship may be a Dock or a Port
-    if it is in the queue. 
-    @param index the index to be searched for
-    */
-    public Thing getDockByIndex(int index) {
-        for (SeaPort port : ports) {
-            if (port.getIndex() == index) {
-                return port;
-            }
-            for (Dock dock : port.docks) {
-                if (dock.getIndex() == index) {
-                    return dock;
-                }
-            }
-        }
-        return null;
-    } // end getDockByIndex method
     
     /*
     method to search for all constituent Things of which the name maches the 
