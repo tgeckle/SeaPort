@@ -145,7 +145,9 @@ class World extends Thing {
     Adds a Job to the World (unimplemented)
     */
     public void addJob(Scanner input, HashMap<Integer, Thing> map) {
-
+        Job job = new Job(input);
+        Ship ship = (Ship) map.get(job.getParent());
+        ship.addJob(job);
     } // end addJob
     
     /*

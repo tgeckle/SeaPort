@@ -48,6 +48,10 @@ public class Ship extends Thing {
        }
    }
    
+   public void addJob(Job job) {
+       jobs.add(job);
+   }
+   
    /*
    Constructor for use with CreateSeaPortDataFile
    */

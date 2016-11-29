@@ -5,6 +5,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  * Filename: SeaPortGUI.java
@@ -52,6 +53,15 @@ public class SeaPortGUI extends JFrame {
         JPanel topPane = new JPanel(new GridLayout(3,1,0,0));
         JPanel searchOptionsPane = new JPanel(new BorderLayout(10, 0));
         JPanel sortByPane = new JPanel(new BorderLayout(10, 0));
+        
+        JPanel bottomPane = new JPanel(new BorderLayout(10, 10));
+        bottomPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        
+        JPanel textPane = new JPanel(new BorderLayout(10, 10));
+        
+        JPanel jobPane = new JPanel(new BorderLayout());
+        JPanel jobToolbarPane = new JPanel(new GridLayout(1, 3, 50, 0));
+        jobToolbarPane.setBorder(new EmptyBorder(4, 20, 0, 20));
 
         // Initialize Components
         JFileChooser chooser = new JFileChooser();
@@ -71,9 +81,20 @@ public class SeaPortGUI extends JFrame {
         JButton searchButton = new JButton("Search");
         JButton sortButton = new JButton("Sort");
 
-        JTextArea outputTextArea = new JTextArea(25,60);
-        JScrollPane scrollPane = new JScrollPane(outputTextArea);
+        JTextArea outputTextArea = new JTextArea(15,40);
+        JScrollPane displayPane = new JScrollPane(outputTextArea);
         outputTextArea.setEditable(false);
+
+        JTextArea jobTextArea = new JTextArea(12,40);
+        JScrollPane jobDisplayPane = new JScrollPane(jobTextArea);
+        outputTextArea.setEditable(false);
+        
+        JButton jobSuspendButton = new JButton("Suspend Job");
+        JButton jobResumeButton = new JButton("Resume Job");
+        JButton jobCancelButton = new JButton("Cancel Job");
+        
+        JTree tree = new JTree(buildInitialTree());
+        JScrollPane treePane = new JScrollPane(tree);
 
         // Listeneres
         // Listener for file input button
@@ -330,19 +351,99 @@ public class SeaPortGUI extends JFrame {
         searchPane.add(searchField, BorderLayout.CENTER);
         searchPane.add(searchOptionsPane, BorderLayout.EAST);
         
+        jobToolbarPane.add(jobSuspendButton);
+        jobToolbarPane.add(jobResumeButton);
+        jobToolbarPane.add(jobCancelButton);
+        
+        jobPane.add(jobDisplayPane, BorderLayout.CENTER);
+        jobPane.add(jobToolbarPane, BorderLayout.SOUTH);
+        
+        textPane.add(displayPane, BorderLayout.CENTER);
+        textPane.add(jobPane, BorderLayout.SOUTH);
+        
         topPane.add(filePane);
         topPane.add(searchPane);
         topPane.add(sortPane);
+        
+        bottomPane.add(treePane, BorderLayout.WEST);
+        bottomPane.add(textPane, BorderLayout.CENTER);
 
         frame.add(topPane, BorderLayout.NORTH);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(bottomPane, BorderLayout.CENTER);
 
         add(frame);
         
         pack();
         setVisible(true);
     }
+    
+    private DefaultTreeModel buildTree() {
+        SeaNode rootNode = new SeaNode(theWorld);
+        
+        for (SeaPort port : theWorld.ports) {
+            SeaNode portNode = new SeaNode(port);
+            
+            SeaNode docksNode = new SeaNode("Docks");
+            SeaNode queueNode = new SeaNode("Queue");
+            SeaNode shipsNode = new SeaNode("Ships");
+            SeaNode peopleNode = new SeaNode("People");
+            
+            for (Dock dock : port.docks) {
+                SeaNode dockNode = new SeaNode(dock);
+                dockNode.add(new SeaNode(dock.ship));
+                docksNode.add(dockNode);
+            }
+            
+            for (Ship ship : port.queue) {
+                SeaNode shipNode = new SeaNode(ship);
+                SeaNode jobsNode = new SeaNode("Jobs");
+                
+                for (Job job : ship.jobs) {
+                    SeaNode jobNode = new SeaNode(job);
+                    jobsNode.add(jobNode);
+                }
+                
+                shipNode.add(jobsNode);
+                queueNode.add(shipNode);
+            }
+            
+            for (Ship ship : port.ships) {
+                SeaNode shipNode = new SeaNode(ship);
+                SeaNode jobsNode = new SeaNode("Jobs");
+                
+                for (Job job : ship.jobs) {
+                    SeaNode jobNode = new SeaNode(job);
+                    jobsNode.add(jobNode);
+                }
+                
+                shipNode.add(jobsNode);
+                shipsNode.add(shipNode);
+            }
+            
+            for (Person dude : port.persons) {
+                SeaNode personNode = new SeaNode(dude);
+                peopleNode.add(personNode);
+            }
+            
+            portNode.add(docksNode);
+            portNode.add(queueNode);
+            portNode.add(shipsNode);
+            portNode.add(peopleNode);
+            
+            rootNode.add(portNode);
+        }
+        
+        return new DefaultTreeModel(rootNode);
+    }
 
+    private DefaultTreeModel buildInitialTree() {
+        SeaNode rootNode = new SeaNode("The World");
+        rootNode.add(new SeaNode("Ports                     "
+                + "         "));
+        
+        return new DefaultTreeModel(rootNode);
+    }
+    
     public static void main(String[] args) {
         SeaPortGUI gui = new SeaPortGUI();
         
