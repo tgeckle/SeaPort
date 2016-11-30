@@ -81,11 +81,11 @@ public class SeaPortGUI extends JFrame {
         JButton searchButton = new JButton("Search");
         JButton sortButton = new JButton("Sort");
 
-        JTextArea outputTextArea = new JTextArea(15,40);
+        JTextArea outputTextArea = new JTextArea(15,60);
         JScrollPane displayPane = new JScrollPane(outputTextArea);
         outputTextArea.setEditable(false);
 
-        JTextArea jobTextArea = new JTextArea(12,40);
+        JTextArea jobTextArea = new JTextArea(12,60);
         JScrollPane jobDisplayPane = new JScrollPane(jobTextArea);
         outputTextArea.setEditable(false);
         
@@ -123,6 +123,7 @@ public class SeaPortGUI extends JFrame {
                         typeSelect.setEnabled(true);
 
                         outputTextArea.setText(theWorld.toString());
+                        tree.setModel(buildTree());
                     } catch (FileNotFoundException exc) {
                         JOptionPane.showMessageDialog(null, "File not found."
                                 + "Please try a different file. ", "File Not Found",
@@ -378,7 +379,7 @@ public class SeaPortGUI extends JFrame {
     }
     
     private DefaultTreeModel buildTree() {
-        SeaNode rootNode = new SeaNode(theWorld);
+        SeaNode rootNode = new SeaNode("The World                          ");
         
         for (SeaPort port : theWorld.ports) {
             SeaNode portNode = new SeaNode(port);
@@ -437,9 +438,8 @@ public class SeaPortGUI extends JFrame {
     }
 
     private DefaultTreeModel buildInitialTree() {
-        SeaNode rootNode = new SeaNode("The World");
-        rootNode.add(new SeaNode("Ports                     "
-                + "         "));
+        SeaNode rootNode = new SeaNode("The World                          ");
+        rootNode.add(new SeaNode("Ports"));
         
         return new DefaultTreeModel(rootNode);
     }
