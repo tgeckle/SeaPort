@@ -55,7 +55,7 @@ public class DockRunner extends SwingWorker<String, String>{
                     + World.newLine);
         if (port.queue.isEmpty()) {
             publish("No ships left in queue." + World.newLine + dock.name +
-                    " finished all jobs." + World.newLine);
+                    " finished all jobs." + World.newLine + World.newLine);
         }
         
         return "";

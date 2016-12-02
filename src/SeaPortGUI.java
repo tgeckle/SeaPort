@@ -125,11 +125,9 @@ public class SeaPortGUI extends JFrame {
                         outputTextArea.setText(theWorld.toString());
                         tree.setModel(buildTree());
                         
-                        for (SeaPort port : theWorld.ports) {
-                                PortRunner runner = new PortRunner(port, jobTextArea);
-                                runner.execute();
-                            
-                        }
+                        WorldRunner runner = new WorldRunner(theWorld, jobTextArea);
+                        runner.execute();
+                        
                         
                     } catch (FileNotFoundException exc) {
                         JOptionPane.showMessageDialog(null, "File not found."

@@ -14,14 +14,14 @@ public class Job extends Thing {
    static ArrayList <String> words;
    public boolean finished = false;
   
-   long duration = 0;
+   double duration = 0.0;
    ArrayList <String> requirements = new ArrayList <> ();
   // eg {"painter", "painter", "painter", "carpenter"};
    
    public Job(Scanner input) {
        super(input);
        if (input.hasNextDouble()) {
-           duration = input.nextLong();
+           duration = input.nextDouble();
        }
        while (input.hasNext()) {
            requirements.add(input.next());

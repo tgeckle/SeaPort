@@ -1,27 +1,22 @@
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
 /**
  * Filename: DockRunner.java
  Author: Theresa Geckle
- Date: Dec 1, 2016
+ Date: Dec 2, 2016
  Purpose: 
  */
-public class JobRunner extends SwingWorker<String, String>{
-    Job job;
-    boolean last = false;
-    Instant startTime;
-    Instant finishTime;
-    int modifier = 10;
+public class WorldRunner extends SwingWorker<String, String>{
+    World theWorld;
     JTextArea textArea;
     
-    public JobRunner(Job njob, JTextArea area) {
-        job = njob;
-        startTime = Instant.now();
-        finishTime = startTime.plus((int)job.duration * modifier, ChronoUnit.MILLIS);
+    public WorldRunner(World world, JTextArea area) {
+        theWorld = world;
         textArea = area;
     }
     
@@ -34,22 +29,21 @@ public class JobRunner extends SwingWorker<String, String>{
     
     @Override
     public synchronized String doInBackground() throws InterruptedException{
-        if (!job.finished) {
-
-            while (finishTime.compareTo(Instant.now()) > 0 ) {
-                
+        for (SeaPort port : theWorld.ports) {
+            PortRunner runner = new PortRunner(port, textArea);
+            synchronized (runner) {
+                runner.execute();
+                runner.wait();
             }
+
         }
-                
+        
         return "";
     }
     
     @Override
     protected synchronized void done() {
-        job.finished = true;
         notifyAll();
     }
     
-    
-
 }
