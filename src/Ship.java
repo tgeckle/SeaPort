@@ -48,8 +48,20 @@ public class Ship extends Thing {
        }
    }
    
+   // Adds a job to a Ship
    public void addJob(Job job) {
        jobs.add(job);
+   }
+   
+   // Returns true if all jobs have been finished, to signal that the Ship should
+   // leave the dock
+   public boolean jobsFinished() {
+       for (Job job : jobs) {
+           if (!job.finished) {
+               return false;
+           }
+       }
+       return true;
    }
    
    /*

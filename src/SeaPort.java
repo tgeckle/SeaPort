@@ -26,6 +26,8 @@ class SeaPort extends Thing {
    ArrayList <Ship>   ships   = new ArrayList <> ();
    ArrayList <Person> persons = new ArrayList <> ();
    
+   boolean done = false;
+   
    /*
    Constructor using input from file
    @param input A Scanner object that contains all of the neccessary data to 
@@ -86,6 +88,31 @@ class SeaPort extends Thing {
          persons.add (new Person (this));
       }
    } // end list of port names constructor - creates a random port
+   
+   /*
+   Dispatches current assigned Ship from a given Dock and takes on the next Ship
+   in the queue. Before being called, it should be checked that there are still 
+   Ships in the queue.
+     */
+   
+   public synchronized void dispatchShips() {
+       for (Dock dock : docks) {
+           if (dock.ship.jobsFinished()) {
+               if (!queue.isEmpty()) {
+                   System.out.println("");
+                   System.out.println("Dispatching " + dock.ship.getName());
+                   dock.ship = queue.remove(0);
+                   System.out.println(dock.ship.getName() + " now docked at "
+                           + dock.getName());
+               } else {
+                   System.out.println("Dispatching " + dock.ship.getName());   
+                   System.out.println("");
+                   System.out.println("Queue empty. All ships dispatched.");
+                   done = true;
+               }
+           }
+       }
+   }
    
    /*
    Adds a Dock to the ArrayList of Docks within the seaport.

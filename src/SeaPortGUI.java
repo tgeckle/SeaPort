@@ -124,10 +124,22 @@ public class SeaPortGUI extends JFrame {
 
                         outputTextArea.setText(theWorld.toString());
                         tree.setModel(buildTree());
+                        
+                        for (SeaPort port : theWorld.ports) {
+                                for (Dock dock : port.docks) {
+                                    DockRunner jobbie = new DockRunner(dock, port);
+                                    jobbie.execute();
+                                    
+                                }
+                            
+                        }
+                        
                     } catch (FileNotFoundException exc) {
                         JOptionPane.showMessageDialog(null, "File not found."
                                 + "Please try a different file. ", "File Not Found",
                                 JOptionPane.ERROR_MESSAGE);
+//                    } catch (InterruptedException exc) {
+//                        System.out.println("Interrupted");
                     }
 
                 }

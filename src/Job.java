@@ -12,15 +12,16 @@ import java.util.Scanner;
 public class Job extends Thing {
    static int indexNew = 60000;
    static ArrayList <String> words;
+   public boolean finished = false;
   
-   double duration = 0;
+   long duration = 0;
    ArrayList <String> requirements = new ArrayList <> ();
   // eg {"painter", "painter", "painter", "carpenter"};
    
    public Job(Scanner input) {
        super(input);
        if (input.hasNextDouble()) {
-           duration = input.nextDouble();
+           duration = input.nextLong();
        }
        while (input.hasNext()) {
            requirements.add(input.next());
@@ -32,7 +33,7 @@ public class Job extends Thing {
                 rn.nextInt(90)+10, rn.nextInt(90)+10, rn.nextInt(90)+10);
       index = indexNew++;
       parent = ms.index;
-      duration = rn.nextDouble () * 100 + 20;
+      duration = rn.nextLong () * 100 + 20;
       if (skillNames == null) readSkillsFile ();
       for (int i = 0; i < rn.nextInt (5); i++)
          requirements.add (skillNames.get (rn.nextInt (skillNames.size())));
