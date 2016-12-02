@@ -5,7 +5,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultTreeModel;
 
 /**
@@ -127,11 +126,8 @@ public class SeaPortGUI extends JFrame {
                         tree.setModel(buildTree());
                         
                         for (SeaPort port : theWorld.ports) {
-                                for (Dock dock : port.docks) {
-                                    DockRunner jobbie = new DockRunner(dock, port);
-                                    jobbie.execute();
-                                    
-                                }
+                                PortRunner runner = new PortRunner(port, jobTextArea);
+                                runner.execute();
                             
                         }
                         
@@ -455,17 +451,6 @@ public class SeaPortGUI extends JFrame {
         rootNode.add(new SeaNode("Ports"));
         
         return new DefaultTreeModel(rootNode);
-    }
-    
-    private void buildTable() {
-        DefaultTableModel tableModel;
-        String[] columnNames = {"Dock Number", "Ship Name", "Job Number", 
-            "Progress", "Status", "Select"};
-        Stack<Stack> tableData = new Stack<>();
-        
-        for (SeaPort port : theWorld.ports) {
-            
-        }
     }
     
     public static void main(String[] args) {

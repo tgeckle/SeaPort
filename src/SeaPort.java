@@ -99,15 +99,8 @@ class SeaPort extends Thing {
        for (Dock dock : docks) {
            if (dock.ship.jobsFinished()) {
                if (!queue.isEmpty()) {
-                   System.out.println("");
-                   System.out.println("Dispatching " + dock.ship.getName());
                    dock.ship = queue.remove(0);
-                   System.out.println(dock.ship.getName() + " now docked at "
-                           + dock.getName());
                } else {
-                   System.out.println("Dispatching " + dock.ship.getName());   
-                   System.out.println("");
-                   System.out.println("Queue empty. All ships dispatched.");
                    done = true;
                }
            }

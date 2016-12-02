@@ -1,5 +1,7 @@
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
 /**
@@ -8,47 +10,44 @@ import javax.swing.SwingWorker;
  Date: Dec 1, 2016
  Purpose: 
  */
-public class JobRunner extends SwingWorker{
+public class JobRunner extends SwingWorker<String, String>{
     Job job;
-    SeaPort port;
     boolean last = false;
     Instant startTime;
     Instant finishTime;
-    static int modifier = 30;
+    int modifier = 10;
+    JTextArea textArea;
     
-    public JobRunner(Job njob, SeaPort nport) {
+    public JobRunner(Job njob, JTextArea area) {
         job = njob;
-        port = nport;
         startTime = Instant.now();
         finishTime = startTime.plus(job.duration * modifier, ChronoUnit.MILLIS);
+        textArea = area;
     }
     
-    public void setLast(boolean isLast) {
-        last = isLast;
+    @Override
+    public void process(List<String> chunks) {
+        for (String chunk : chunks) {
+            textArea.append(chunk);
+        }
     }
     
     @Override
     public synchronized String doInBackground() throws InterruptedException{
         if (!job.finished) {
-            System.out.println("Beginng " + job.getName());
 
             while (finishTime.compareTo(Instant.now()) > 0 ) {
                 
             }
         }
-        
+                
         return "";
     }
     
     @Override
     protected synchronized void done() {
-        System.out.println("Job finished.");
         job.finished = true;
-
-        if (!port.queue.isEmpty()) {
-            port.dispatchShips();
-
-        }
+        notifyAll();
     }
     
     

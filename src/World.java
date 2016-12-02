@@ -12,6 +12,7 @@ class World extends Thing {
 
     ArrayList<SeaPort> ports = new ArrayList<>();
     Time time = new Time(0);
+    static String newLine = System.getProperty("line.separator");
 
     /*
     Method for creating random ports to use in random input files.
