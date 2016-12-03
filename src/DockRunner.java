@@ -1,7 +1,10 @@
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
@@ -15,11 +18,27 @@ public class DockRunner extends SwingWorker<String, String>{
     Dock dock;
     SeaPort port;
     JTextArea textArea;
+    JProgressBar progress;
+    JobRunner runner;
     
-    public DockRunner(Dock ndock, SeaPort nPort, JTextArea area) {
+    public DockRunner(Dock ndock, SeaPort nPort, JTextArea area, 
+            JProgressBar progressBar) {
         dock = ndock;
         port = nPort;
         textArea = area;
+        progress = progressBar;
+    }
+    
+    public void cancel() {
+        runner.cancel(true);
+    }
+    
+    public void pause() {
+        runner.pause();
+    }
+    
+    public void unPause() {
+        runner.unPause();
     }
     
     @Override
@@ -40,10 +59,22 @@ public class DockRunner extends SwingWorker<String, String>{
             for (Job job : dock.ship.jobs) {
                 publish("Beginning " + job.name + " on the ship "
                         + dock.ship.name + World.newLine);
-                JobRunner jobbie = new JobRunner(job, textArea);
-                synchronized (jobbie) {
-                    jobbie.execute();
-                    jobbie.wait();
+                runner = new JobRunner(job, textArea);
+                progress.setValue(0);
+                progress.setStringPainted(true);
+                runner.addPropertyChangeListener(new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if ("progress".equals(evt.getPropertyName()) &!job.finished) {
+                            progress.setValue((Integer) evt.getNewValue());
+                        }
+                        else if ("progress".equals(evt.getPropertyName()) &job.finished) {
+                            progress.setValue(100);
+                        }
+                    }
+                });
+                synchronized (runner) {
+                    runner.execute();
+                    runner.wait();
                 }
                 publish(job.name + " finished." + World.newLine);
 

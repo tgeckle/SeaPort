@@ -2,6 +2,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
@@ -14,10 +15,25 @@ import javax.swing.SwingWorker;
 public class PortRunner extends SwingWorker<String, String>{
     SeaPort port;
     JTextArea textArea;
+    JProgressBar progress;
+    DockRunner runner;
     
-    public PortRunner(SeaPort nport, JTextArea area) {
+    public PortRunner(SeaPort nport, JTextArea area, JProgressBar progressBar) {
         port = nport;
         textArea = area;
+        progress = progressBar;
+    }
+    
+    public void cancel() {
+        runner.cancel();
+    }
+    
+    public void pause() {
+        runner.pause();
+    }
+    
+    public void unPause() {
+        runner.unPause();
     }
     
     @Override
@@ -36,7 +52,7 @@ public class PortRunner extends SwingWorker<String, String>{
                 
                 publish("Undertaking jobs at " + dock.name + World.newLine
                  + World.newLine);
-                DockRunner runner = new DockRunner(dock, port, textArea);
+                runner = new DockRunner(dock, port, textArea, progress);
 
                 synchronized (runner) {
                     runner.execute();

@@ -33,6 +33,8 @@ public class SeaPortGUI extends JFrame {
     DefaultComboBoxModel shipModel = new DefaultComboBoxModel(sortOptionsShip);
     FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
     World theWorld; // All ports etc. are held within the World
+    
+    WorldRunner runner;
 
     public SeaPortGUI() {
         super();
@@ -60,7 +62,7 @@ public class SeaPortGUI extends JFrame {
         JPanel textPane = new JPanel(new BorderLayout(10, 10));
         
         JPanel jobPane = new JPanel(new BorderLayout());
-        JPanel jobToolbarPane = new JPanel(new GridLayout(1, 3, 50, 0));
+        JPanel jobToolbarPane = new JPanel(new GridLayout(1, 4, 30, 0));
         jobToolbarPane.setBorder(new EmptyBorder(4, 20, 0, 20));
 
         // Initialize Components
@@ -89,6 +91,7 @@ public class SeaPortGUI extends JFrame {
         JScrollPane jobDisplayPane = new JScrollPane(jobTextArea);
         outputTextArea.setEditable(false);
         
+        JProgressBar progressBar = new JProgressBar(0, 100);
         JButton jobSuspendButton = new JButton("Suspend Job");
         JButton jobResumeButton = new JButton("Resume Job");
         JButton jobCancelButton = new JButton("Cancel Job");
@@ -125,7 +128,8 @@ public class SeaPortGUI extends JFrame {
                         outputTextArea.setText(theWorld.toString());
                         tree.setModel(buildTree());
                         
-                        WorldRunner runner = new WorldRunner(theWorld, jobTextArea);
+                        runner = new WorldRunner(theWorld, 
+                                jobTextArea, progressBar);
                         runner.execute();
                         
                         
@@ -139,6 +143,24 @@ public class SeaPortGUI extends JFrame {
 
                 }
 
+            }
+        });
+        
+        jobCancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                runner.cancel();
+            }
+        });
+        
+        jobSuspendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                runner.pause();
+            }
+        });
+        
+        jobResumeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                runner.unPause();
             }
         });
         
@@ -359,6 +381,7 @@ public class SeaPortGUI extends JFrame {
         searchPane.add(searchField, BorderLayout.CENTER);
         searchPane.add(searchOptionsPane, BorderLayout.EAST);
         
+        jobToolbarPane.add(progressBar);
         jobToolbarPane.add(jobSuspendButton);
         jobToolbarPane.add(jobResumeButton);
         jobToolbarPane.add(jobCancelButton);
