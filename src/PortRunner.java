@@ -51,12 +51,17 @@ public class PortRunner extends SwingWorker<String, String>{
             for (Dock dock : port.docks) {
                 
                 publish("Undertaking jobs at " + dock.name + World.newLine
-                 + World.newLine);
-                runner = new DockRunner(dock, port, textArea, progress);
+                        + World.newLine);
+                if (dock.ship.jobs.isEmpty()) {
+                    publish("No jobs found on ship " + dock.ship.name + "."
+                            + World.newLine);
+                } else {
+                    runner = new DockRunner(dock, port, textArea, progress);
 
-                synchronized (runner) {
-                    runner.execute();
-                    runner.wait();
+                    synchronized (runner) {
+                        runner.execute();
+                        runner.wait();
+                    }
                 }
 
                 port.dispatchShips();
