@@ -15,7 +15,7 @@ public class JobRunner extends SwingWorker<String, Integer>{
     boolean paused = false;
     Instant startTime;
     Instant finishTime;
-    int modifier = 1000;
+    int modifier = 30;
     JTextArea textArea;
     
     int length;
@@ -74,6 +74,7 @@ public class JobRunner extends SwingWorker<String, Integer>{
             textArea.append("Job cancelled." + World.newLine);
         }
         job.finished = true;
+        setProgress(100);
         notifyAll();
     }
     

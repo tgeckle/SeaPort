@@ -102,6 +102,7 @@ class World extends Thing {
         } 
         else {
             ((Dock) map.get(newShip.getParent())).addShip(newShip);
+            ((SeaPort)map.get(map.get(newShip.getParent()).getParent())).ships.add(newShip);
         }
     } // end addShip
     
@@ -116,6 +117,7 @@ class World extends Thing {
         } 
         else {
             ((Dock) map.get(newShip.getParent())).addShip(newShip);
+            ((SeaPort)map.get(map.get(newShip.getParent()).getParent())).ships.add(newShip);
         }
     } // end addCargoShip
     
@@ -130,6 +132,7 @@ class World extends Thing {
         } 
         else {
             ((Dock) map.get(newShip.getParent())).addShip(newShip);
+            ((SeaPort)map.get(map.get(newShip.getParent()).getParent())).ships.add(newShip);
         }
     } // end addPassengerShip
     
