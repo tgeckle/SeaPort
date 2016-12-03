@@ -94,16 +94,27 @@ class SeaPort extends Thing {
    in the queue. Before being called, it should be checked that there are still 
    Ships in the queue.
      */
+   public boolean isDone() {
+       for (Dock dock : docks) {
+           if (!dock.done) {
+               return false;
+           }
+       }
+       
+       return true;
+   }
    
    public synchronized void dispatchShips() {
        for (Dock dock : docks) {
-           if (dock.ship.jobsFinished()) {
+           if (dock.ship.jobsFinished() && dock.ship.visited) {
                if (!queue.isEmpty()) {
                    dock.ship = queue.remove(0);
                } else {
-                   done = true;
+                   dock.done = true;
                }
+               return;
            }
+           
        }
    }
    

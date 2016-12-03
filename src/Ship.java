@@ -21,6 +21,7 @@ public class Ship extends Thing {
    Time arrivalTime = null;
    Time dockTime    = null;
    ArrayList <Job> jobs = new ArrayList <> ();
+   boolean visited = false;
    
    /*
    empty no-parameter constructor

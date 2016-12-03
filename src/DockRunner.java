@@ -75,6 +75,7 @@ public class DockRunner extends SwingWorker<String, String>{
             publish(job.name + " finished." + World.newLine);
 
         }
+        dock.ship.visited = true;
         publish("All jobs finished on " + dock.ship.name + World.newLine
         );
 

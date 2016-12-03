@@ -47,7 +47,7 @@ public class PortRunner extends SwingWorker<String, String>{
     public synchronized String doInBackground() throws InterruptedException{
         publish("Beginning jobs in Port of " + port.name + World.newLine
                 + World.newLine);
-        while (!port.done) {
+        while (!port.isDone()) {
             for (Dock dock : port.docks) {
                 
                 publish("Undertaking jobs at " + dock.name + World.newLine
@@ -55,6 +55,7 @@ public class PortRunner extends SwingWorker<String, String>{
                 if (dock.ship.jobs.isEmpty()) {
                     publish("No jobs found on ship " + dock.ship.name + "."
                             + World.newLine);
+                    dock.ship.visited = true;
                 } else {
                     runner = new DockRunner(dock, port, textArea, progress);
 

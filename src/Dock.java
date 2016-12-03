@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class Dock extends Thing {
    static int indexNew = 20000;
    Ship ship = null; // field for the Ship moored at the Dock
+   boolean done = false;
    
    /*
    Constructor using input from file
