@@ -128,6 +128,8 @@ public class SeaPortGUI extends JFrame {
                         outputTextArea.setText(theWorld.toString());
                         tree.setModel(buildTree());
                         
+                        jobTextArea.setText("");
+                        
                         runner = new WorldRunner(theWorld, 
                                 jobTextArea, progressBar);
                         runner.execute();
