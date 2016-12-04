@@ -12,7 +12,9 @@ import javax.swing.SwingWorker;
  * Filename: DockRunner.java
  Author: Theresa Geckle
  Date: Dec 1, 2016
- Purpose: 
+ Purpose: Extends the abstract SwingWorker class to implement a class that 
+ * handles all the jobs within the ship currently docked at the given Dock at 
+ * the time of instantiation.
  */
 public class DockRunner extends SwingWorker<String, String>{
     Dock dock;

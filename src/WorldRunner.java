@@ -10,7 +10,8 @@ import javax.swing.SwingWorker;
  * Filename: DockRunner.java
  Author: Theresa Geckle
  Date: Dec 2, 2016
- Purpose: 
+ Purpose: Extends the abstract SwingWorker class to implement a class that 
+ * handles all the jobs at all the ports within the given World. 
  */
 public class WorldRunner extends SwingWorker<String, String>{
     World theWorld;

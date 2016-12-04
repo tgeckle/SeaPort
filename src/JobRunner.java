@@ -8,14 +8,16 @@ import javax.swing.SwingWorker;
  * Filename: DockRunner.java
  Author: Theresa Geckle
  Date: Dec 1, 2016
- Purpose: 
+ Purpose: Extends the abstract SwingWorker class to implement a class that 
+ * handles a single job. Also contains the core logic for what happens if the
+ * workflow is paused or unpaused. 
  */
 public class JobRunner extends SwingWorker<String, Integer>{
     Job job;
     boolean paused = false;
     Instant startTime;
     Instant finishTime;
-    int modifier = 30;
+    final int MODIFIER = 1000;
     JTextArea textArea;
     
     int length;
@@ -23,20 +25,31 @@ public class JobRunner extends SwingWorker<String, Integer>{
     public JobRunner(Job njob, JTextArea area) {
         job = njob;
         startTime = Instant.now();
-        length = (int)job.duration * modifier;
+        length = (int)job.duration * MODIFIER;
         finishTime = startTime.plus(length, ChronoUnit.MILLIS);
         textArea = area;
     }
     
     public void pause() {
-        textArea.append(World.newLine + "WORKFLOW PAUSED. CLICK RESUME TO "
-                + "UNPAUSE" + World.newLine);
-        paused = true;
+        if (!paused) {
+            textArea.append(World.newLine + "WORKFLOW PAUSED. CLICK 'RESUME JOB' "
+                    + "TO UNPAUSE" + World.newLine);
+            paused = true;
+        }
+        else {
+            textArea.append("WORKFLOW ALREADY PAUSED. CLICK 'RESUME JOB' TO "
+                    + "UNPAUSE." + World.newLine + World.newLine);
+        }
     }
     
     public void unPause(){
-        textArea.append("Resuming workflow." + World.newLine + World.newLine);
+        if (paused) {
+        textArea.append("RESUMING WORKFLOW." + World.newLine + World.newLine);
         paused = false;
+        } else {
+            textArea.append("JOB MUST BE PAUSED TO RESUME." + World.newLine 
+                    + World.newLine);
+        }
     }
     
     @Override
@@ -71,7 +84,7 @@ public class JobRunner extends SwingWorker<String, Integer>{
     @Override
     protected synchronized void done() {
         if (isCancelled()) {
-            textArea.append("Job cancelled." + World.newLine);
+            textArea.append("JOB CANCELLED." + World.newLine + World.newLine);
         }
         job.finished = true;
         setProgress(100);

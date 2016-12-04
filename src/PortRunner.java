@@ -10,7 +10,8 @@ import javax.swing.SwingWorker;
  * Filename: DockRunner.java
  Author: Theresa Geckle
  Date: Dec 2, 2016
- Purpose: 
+ Purpose: Extends the abstract SwingWorker class to implement a class that 
+ * handles all the jobs within the supplied port.
  */
 public class PortRunner extends SwingWorker<String, String>{
     SeaPort port;
@@ -25,15 +26,27 @@ public class PortRunner extends SwingWorker<String, String>{
     }
     
     public void cancel() {
-        runner.cancel();
+        if (!port.isDone()) {
+            runner.cancel();
+        } else {
+            textArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO CANCEL.");
+        }
     }
     
     public void pause() {
-        runner.pause();
+        if (!port.isDone()) {
+            runner.pause();
+        } else {
+            textArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO SUSPEND.");
+        }
     }
     
     public void unPause() {
-        runner.unPause();
+        if (!port.isDone()) {
+            runner.unPause();
+        } else {
+            textArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO RESUME.");
+        }
     }
     
     @Override
