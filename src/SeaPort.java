@@ -94,7 +94,7 @@ class SeaPort extends Thing {
    in the queue. Before being called, it should be checked that there are still 
    Ships in the queue.
      */
-   public boolean isDone() {
+   public synchronized boolean isDone() {
        for (Dock dock : docks) {
            if (!dock.done) {
                return false;
@@ -112,7 +112,6 @@ class SeaPort extends Thing {
                } else {
                    dock.done = true;
                }
-               return;
            }
            
        }

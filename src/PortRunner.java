@@ -50,22 +50,25 @@ public class PortRunner extends SwingWorker<String, String>{
         while (!port.isDone()) {
             for (Dock dock : port.docks) {
                 
-                publish("Undertaking jobs at " + dock.name + World.newLine
-                        + World.newLine);
-                if (dock.ship.jobs.isEmpty()) {
-                    publish("No jobs found on ship " + dock.ship.name + "."
+                if(!dock.ship.visited) {
+
+                    publish("Undertaking jobs at " + dock.name + World.newLine
                             + World.newLine);
-                    dock.ship.visited = true;
-                } else {
-                    runner = new DockRunner(dock, port, textArea, progress);
+                    if (dock.ship.jobs.isEmpty()) {
+                        publish("No jobs found on ship " + dock.ship.name + "."
+                                + World.newLine);
+                        dock.ship.visited = true;
+                    } else {
+                        runner = new DockRunner(dock, port, textArea, progress);
 
-                    synchronized (runner) {
-                        runner.execute();
-                        runner.wait();
+                        synchronized (runner) {
+                            runner.execute();
+                            runner.wait();
+                        }
                     }
-                }
 
-                port.dispatchShips();
+                    port.dispatchShips();
+            }
 
             }
         }
