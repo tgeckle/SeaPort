@@ -25,6 +25,7 @@ class SeaPort extends Thing {
    ArrayList <Ship>   queue     = new ArrayList <> ();
    ArrayList <Ship>   ships   = new ArrayList <> ();
    ArrayList <Person> persons = new ArrayList <> ();
+   ArrayList <Person> freeWorkers = new ArrayList <> ();
    
    boolean done = false;
    
@@ -144,6 +145,7 @@ class SeaPort extends Thing {
    */
    public void addPerson(Person dude) {
        persons.add(dude);
+       freeWorkers.add(dude);
    } // end addPerson()
    
    /*

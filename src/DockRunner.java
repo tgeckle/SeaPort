@@ -19,15 +19,17 @@ import javax.swing.SwingWorker;
 public class DockRunner extends SwingWorker<String, String>{
     Dock dock;
     SeaPort port;
-    JTextArea textArea;
+    JTextArea jobTextArea;
+    JTextArea workerTextArea;
     JProgressBar progress;
     JobRunner runner;
     
-    public DockRunner(Dock ndock, SeaPort nPort, JTextArea area, 
-            JProgressBar progressBar) {
+    public DockRunner(Dock ndock, SeaPort nPort, JTextArea jArea, 
+            JTextArea wArea, JProgressBar progressBar) {
         dock = ndock;
         port = nPort;
-        textArea = area;
+        jobTextArea = jArea;
+        workerTextArea = wArea;
         progress = progressBar;
     }
     
@@ -46,7 +48,7 @@ public class DockRunner extends SwingWorker<String, String>{
     @Override
     public void process(List<String> chunks) {
         for (String chunk : chunks) {
-            textArea.append(chunk);
+            jobTextArea.append(chunk);
         }
     }
     
@@ -58,7 +60,7 @@ public class DockRunner extends SwingWorker<String, String>{
         for (Job job : dock.ship.jobs) {
             publish("Beginning " + job.name + " on the ship "
                     + dock.ship.name + World.newLine);
-            runner = new JobRunner(job, textArea);
+            runner = new JobRunner(job, port, jobTextArea, workerTextArea);
             progress.setValue(0);
             progress.setStringPainted(true);
             runner.addPropertyChangeListener(new PropertyChangeListener() {
@@ -74,8 +76,7 @@ public class DockRunner extends SwingWorker<String, String>{
                 runner.execute();
                 runner.wait();
             }
-            publish(job.name + " finished." + World.newLine);
-
+            
         }
         dock.ship.visited = true;
         publish("All jobs finished on " + dock.ship.name + World.newLine

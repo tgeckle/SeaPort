@@ -61,7 +61,8 @@ public class SeaPortGUI extends JFrame {
         
         JPanel textPane = new JPanel(new BorderLayout(10, 10));
         
-        JPanel jobPane = new JPanel(new BorderLayout());
+        JPanel jobPane = new JPanel(new BorderLayout(0, 5));
+        JPanel jobOutputPane = new JPanel(new BorderLayout(7, 0));
         JPanel jobToolbarPane = new JPanel(new GridLayout(1, 4, 30, 0));
         jobToolbarPane.setBorder(new EmptyBorder(4, 20, 0, 20));
 
@@ -86,10 +87,13 @@ public class SeaPortGUI extends JFrame {
         JTextArea outputTextArea = new JTextArea(15,60);
         JScrollPane displayPane = new JScrollPane(outputTextArea);
         outputTextArea.setEditable(false);
-
-        JTextArea jobTextArea = new JTextArea(12,60);
+        
+        JTextArea jobTextArea = new JTextArea(12,38);
         JScrollPane jobDisplayPane = new JScrollPane(jobTextArea);
-        outputTextArea.setEditable(false);
+        JTextArea workerTextArea = new JTextArea(12,21);
+        JScrollPane workerDisplayPane = new JScrollPane(workerTextArea);
+        jobTextArea.setEditable(false);
+        workerTextArea.setEditable(false);
         
         JProgressBar progressBar = new JProgressBar(0, 100);
         JButton jobSuspendButton = new JButton("Suspend Job");
@@ -131,7 +135,7 @@ public class SeaPortGUI extends JFrame {
                         jobTextArea.setText("");
                         
                         runner = new WorldRunner(theWorld, 
-                                jobTextArea, progressBar);
+                                jobTextArea, workerTextArea, progressBar);
                         runner.execute();
                         
                         
@@ -388,7 +392,10 @@ public class SeaPortGUI extends JFrame {
         jobToolbarPane.add(jobResumeButton);
         jobToolbarPane.add(jobCancelButton);
         
-        jobPane.add(jobDisplayPane, BorderLayout.CENTER);
+        jobOutputPane.add(jobDisplayPane, BorderLayout.CENTER);
+        jobOutputPane.add(workerDisplayPane, BorderLayout.EAST);
+        
+        jobPane.add(jobOutputPane, BorderLayout.CENTER);
         jobPane.add(jobToolbarPane, BorderLayout.SOUTH);
         
         textPane.add(displayPane, BorderLayout.CENTER);

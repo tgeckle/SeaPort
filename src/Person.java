@@ -13,6 +13,8 @@ import java.util.Scanner;
 public class Person extends Thing {
    static int indexNew = 50000;
    static ArrayList <String> words; 
+   
+   boolean isWorking = false;
   
    String skill = ""; // skill associated with a Person
    

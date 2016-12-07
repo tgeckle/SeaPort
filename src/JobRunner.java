@@ -1,5 +1,6 @@
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
@@ -12,51 +13,93 @@ import javax.swing.SwingWorker;
  * handles a single job. Also contains the core logic for what happens if the
  * workflow is paused or unpaused. 
  */
-public class JobRunner extends SwingWorker<String, Integer>{
+public class JobRunner extends SwingWorker<String, String>{
+    SeaPort port;
     Job job;
     boolean paused = false;
     Instant startTime;
     Instant finishTime;
-    final int MODIFIER = 1000;
-    JTextArea textArea;
+    final int MODIFIER = 30;
+    JTextArea jobTextArea;
+    JTextArea workerTextArea;
+    ArrayList<Person> workers;
     
     int length;
     
-    public JobRunner(Job njob, JTextArea area) {
+    public JobRunner(Job njob, SeaPort nport, JTextArea jArea, JTextArea wArea) {
         job = njob;
+        port = nport;
         startTime = Instant.now();
         length = (int)job.duration * MODIFIER;
         finishTime = startTime.plus(length, ChronoUnit.MILLIS);
-        textArea = area;
+        jobTextArea = jArea;
+        workerTextArea = wArea;
+        workers = new ArrayList<>();
     }
     
     public void pause() {
         if (!paused) {
-            textArea.append(World.newLine + "WORKFLOW PAUSED. CLICK 'RESUME JOB' "
+            jobTextArea.append(World.newLine + "WORKFLOW PAUSED. CLICK 'RESUME JOB' "
                     + "TO UNPAUSE" + World.newLine);
             paused = true;
         }
         else {
-            textArea.append("WORKFLOW ALREADY PAUSED. CLICK 'RESUME JOB' TO "
+            jobTextArea.append("WORKFLOW ALREADY PAUSED. CLICK 'RESUME JOB' TO "
                     + "UNPAUSE." + World.newLine + World.newLine);
         }
     }
     
     public void unPause(){
         if (paused) {
-        textArea.append("RESUMING WORKFLOW." + World.newLine + World.newLine);
+        publish("RESUMING WORKFLOW." + World.newLine + World.newLine);
         paused = false;
         } else {
-            textArea.append("JOB MUST BE PAUSED TO RESUME." + World.newLine 
+            publish("JOB MUST BE PAUSED TO RESUME." + World.newLine 
                     + World.newLine);
         }
     }
     
     @Override
-    public void process(List<Integer> chunks) {
-        for (Integer chunk : chunks) {
-//            System.out.println("" + elapsed);
-//            setProgress((int)(100 *(elapsed / (job.duration * modifier))));
+    public void process(List<String> chunks) {
+        for (String chunk : chunks) {
+            jobTextArea.append(chunk);
+        }
+    }
+    
+    protected synchronized void assignWorkers() {
+        boolean skillAssigned = false;
+        for (String skill : job.requirements) {
+            for (Person dude : port.persons) {
+                if (!dude.isWorking && dude.skill.equals(skill)) {
+                    workers.add(dude);
+                    dude.isWorking = true;
+                    skillAssigned = true;
+                    port.freeWorkers.remove(dude);
+                    break;
+                }
+            }
+            if (!skillAssigned) {
+                publish("Insufficient workers found. No worker found with "
+                        + "'" + skill + "' skill." + World.newLine);
+                cancel(true);
+            }
+            
+            setWorkerText();
+        }
+    }
+    
+    private synchronized void setWorkerText() {
+        workerTextArea.setText("Port of " + port.name + ": " + World.newLine);
+        workerTextArea.append("Workers engaged: " + World.newLine);
+        for (Person dude : workers) {
+            workerTextArea.append("- " + dude.name + " (" + dude.skill + ")"
+            + World.newLine);
+        }
+        workerTextArea.append(World.newLine + "Workers available: " 
+                + World.newLine);
+        for (Person dude : port.freeWorkers) {
+            workerTextArea.append("- " + dude.name + " (" + dude.skill + ")"
+            + World.newLine);
         }
     }
     
@@ -64,6 +107,7 @@ public class JobRunner extends SwingWorker<String, Integer>{
     @Override
     public synchronized String doInBackground() throws InterruptedException{
         if (!job.finished) {
+            assignWorkers();
 
             while (finishTime.isAfter(Instant.now()) & !isCancelled()) {
                 if (paused) {
@@ -84,10 +128,20 @@ public class JobRunner extends SwingWorker<String, Integer>{
     @Override
     protected synchronized void done() {
         if (isCancelled()) {
-            textArea.append("JOB CANCELLED." + World.newLine + World.newLine);
+            jobTextArea.append("JOB CANCELLED." + World.newLine + World.newLine);
+        } else {
+            jobTextArea.append(job.name + " finished by ");
         }
         job.finished = true;
         setProgress(100);
+        for (Person dude : workers) {
+            jobTextArea.append(dude.name + " (" + dude.skill + "); ");
+            port.freeWorkers.add(dude);
+            dude.isWorking = false;
+        }
+        workers.removeAll(workers);
+        jobTextArea.append(World.newLine);
+        setWorkerText();
         notifyAll();
     }
     

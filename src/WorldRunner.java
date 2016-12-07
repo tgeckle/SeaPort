@@ -15,20 +15,23 @@ import javax.swing.SwingWorker;
  */
 public class WorldRunner extends SwingWorker<String, String>{
     World theWorld;
-    JTextArea textArea;
+    JTextArea jobTextArea;
+    JTextArea workerTextArea;
     JProgressBar progress;
     PortRunner runner;
     
-    public WorldRunner(World world, JTextArea area, JProgressBar progressBar) {
+    public WorldRunner(World world, JTextArea jArea, JTextArea wArea, 
+            JProgressBar progressBar) {
         theWorld = world;
-        textArea = area;
+        jobTextArea = jArea;
+        workerTextArea = wArea;
         progress = progressBar;
     }
     
     @Override
     public void process(List<String> chunks) {
         for (String chunk : chunks) {
-            textArea.append(chunk);
+            jobTextArea.append(chunk);
         }
     }
     
@@ -47,7 +50,7 @@ public class WorldRunner extends SwingWorker<String, String>{
     @Override
     public synchronized String doInBackground() throws InterruptedException{
         for (SeaPort port : theWorld.ports) {
-            runner = new PortRunner(port, textArea, progress);
+            runner = new PortRunner(port, jobTextArea, workerTextArea, progress);
             synchronized (runner) {
                 runner.execute();
                 runner.wait();

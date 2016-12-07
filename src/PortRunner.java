@@ -15,13 +15,16 @@ import javax.swing.SwingWorker;
  */
 public class PortRunner extends SwingWorker<String, String>{
     SeaPort port;
-    JTextArea textArea;
+    JTextArea jobTextArea;
+    JTextArea workerTextArea;
     JProgressBar progress;
     DockRunner runner;
     
-    public PortRunner(SeaPort nport, JTextArea area, JProgressBar progressBar) {
+    public PortRunner(SeaPort nport, JTextArea jArea, JTextArea wArea, 
+            JProgressBar progressBar) {
         port = nport;
-        textArea = area;
+        jobTextArea = jArea;
+        workerTextArea = wArea;
         progress = progressBar;
     }
     
@@ -29,7 +32,7 @@ public class PortRunner extends SwingWorker<String, String>{
         if (!port.isDone()) {
             runner.cancel();
         } else {
-            textArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO CANCEL.");
+            jobTextArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO CANCEL.");
         }
     }
     
@@ -37,7 +40,7 @@ public class PortRunner extends SwingWorker<String, String>{
         if (!port.isDone()) {
             runner.pause();
         } else {
-            textArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO SUSPEND.");
+            jobTextArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO SUSPEND.");
         }
     }
     
@@ -45,14 +48,14 @@ public class PortRunner extends SwingWorker<String, String>{
         if (!port.isDone()) {
             runner.unPause();
         } else {
-            textArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO RESUME.");
+            jobTextArea.append(World.newLine + "ALL JOBS FINISHED, NOTHING TO RESUME.");
         }
     }
     
     @Override
     public void process(List<String> chunks) {
         for (String chunk : chunks) {
-            textArea.append(chunk);
+            jobTextArea.append(chunk);
         }
     }
     
@@ -72,7 +75,8 @@ public class PortRunner extends SwingWorker<String, String>{
                                 + World.newLine);
                         dock.ship.visited = true;
                     } else {
-                        runner = new DockRunner(dock, port, textArea, progress);
+                        runner = new DockRunner(dock, port, jobTextArea, 
+                                workerTextArea, progress);
 
                         synchronized (runner) {
                             runner.execute();
