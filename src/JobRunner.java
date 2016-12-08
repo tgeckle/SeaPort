@@ -19,7 +19,7 @@ public class JobRunner extends SwingWorker<String, String>{
     boolean paused = false;
     Instant startTime;
     Instant finishTime;
-    final int MODIFIER = 30;
+    final int MODIFIER = 1000;
     JTextArea jobTextArea;
     JTextArea workerTextArea;
     ArrayList<Person> workers;
