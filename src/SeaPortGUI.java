@@ -68,7 +68,7 @@ public class SeaPortGUI extends JFrame {
 
         // Initialize Components
         JFileChooser chooser = new JFileChooser();
-        JTextField fileField = new JTextField(40);
+        JTextField fileField = new JTextField(38);
         fileField.setEditable(false);
         JTextField searchField = new JTextField(22);
         JComboBox options = new JComboBox(SEARCH_OPTIONS);

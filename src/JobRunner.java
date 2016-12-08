@@ -19,7 +19,7 @@ public class JobRunner extends SwingWorker<String, String>{
     boolean paused = false;
     Instant startTime;
     Instant finishTime;
-    final int MODIFIER = 1000;
+    final int MODIFIER = 300;
     JTextArea jobTextArea;
     JTextArea workerTextArea;
     ArrayList<Person> workers;
@@ -51,10 +51,10 @@ public class JobRunner extends SwingWorker<String, String>{
     
     public void unPause(){
         if (paused) {
-        publish("RESUMING WORKFLOW." + World.newLine + World.newLine);
-        paused = false;
+            jobTextArea.append("RESUMING WORKFLOW." + World.newLine + World.newLine);
+            paused = false;
         } else {
-            publish("JOB MUST BE PAUSED TO RESUME." + World.newLine 
+            jobTextArea.append("JOB MUST BE PAUSED TO RESUME." + World.newLine 
                     + World.newLine);
         }
     }
