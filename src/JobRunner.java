@@ -19,7 +19,7 @@ public class JobRunner extends SwingWorker<String, String>{
     boolean paused = false;
     Instant startTime;
     Instant finishTime;
-    final int MODIFIER = 300;
+    final int MODIFIER = 1000;
     JTextArea jobTextArea;
     JTextArea workerTextArea;
     ArrayList<Person> workers;
@@ -129,8 +129,10 @@ public class JobRunner extends SwingWorker<String, String>{
     protected synchronized void done() {
         if (isCancelled()) {
             jobTextArea.append("JOB CANCELLED." + World.newLine + World.newLine);
-        } else {
+        } else if (!job.requirements.isEmpty()){
             jobTextArea.append(job.name + " finished by ");
+        } else {
+            jobTextArea.append(job.name + " finished.");
         }
         job.finished = true;
         setProgress(100);
